@@ -1,46 +1,94 @@
 import './css/styles.css';
-import { fetchEvents } from './js/fetchCountries';
-// notiflix загрузила
-// import Notiflix from 'notiflix';
+import { fetchEvents } from './js/fetchApi';
+import Notiflix from 'notiflix';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import SimpleLightbox from "simplelightbox";
 
-// import debounce from 'lodash.debounce';
-// const DEBOUNCE_DELAY = 300;
+let page = 1;
+let keyword;
+let newtotalHits;
 
-const form = document.querySelector('#search-form');
-// console.log(form);
-const btn = document.querySelector('button');
-// console.log(btn);
-
+const formEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
-// console.log(galleryEl);
-let pageFetch = 1;
-let keyword = `q`;
 
-function getEvents(page, keyword) {
-  console.log(page, keyword);
-  fetchEvents(page, keyword)
+const loadMore = document.querySelector('.load-more');
+loadMore.classList.add('visually-hidden');
+
+// ////////////////////click/////////////////
+loadMore.addEventListener('click', handleClick);
+
+function handleClick() {
+  fetchEvents(keyword, page)
     .then(data => {
-      console.log(data);
+      newtotalHits = data.totalHits;
+      const events = data.hits;
+      if (events.length === 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        return;
+      }
+
+      page += 1;
       renderEvents(events);
-      pageFetch += 1;
+      if (page > 1) {
+        loadMore.classList.remove('visually-hidden');
+      }
     })
     .catch(error => console.log(error));
-};
 
-form.addEventListener('submit', handleSubmit);
+  if (page === newtotalHits / 5) {
+    loadMore.classList.remove('visually-hidden');
+    Notiflix.Notify.failure(
+      `We're sorry, but you've reached the end of search results.`
+    );
+    return;
+  }
+}
+// ////////////////////submit/////////////////
+formEl.addEventListener('submit', handleSubmit);
+
 
 function handleSubmit(event) {
   event.preventDefault();
-  const {
-    elements: { searchQuery },
-  } = event.currentTarget;
-  let inputEl = searchQuery.value;
-  //   console.log(inputEl);
+
+  const form = event.currentTarget;
+  keyword = form.elements.searchQuery.value.trim();
+  if (keyword === '') {
+    galleryEl.innerHTML = '';
+    return;
+  }
+  if (page > 1) {
+    page = 1;
+  }
+
+  fetchEvents(keyword, page)
+    .then(data => {
+      newtotalHits = data.totalHits;
+      const events = data.hits;
+      if (events.length === 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        return;
+      }
+      page += 1;
+      renderEvents(events);
+      if (page > 1) {
+        loadMore.classList.remove('visually-hidden');
+        Notiflix.Notify.success(
+          'Hooray! We found' + ' ' + newtotalHits + ' ' + 'images.'
+        );
+        return;
+      }
+    })
+    .catch(error => console.log(error));
 
   event.currentTarget.reset();
 }
 
-function renderEvents(page, keyword) {
+// //////////////////renderEvents/////////////////////////////////////////
+function renderEvents(events) {
   const markup = events
     .map(
       ({
@@ -55,7 +103,7 @@ function renderEvents(page, keyword) {
         return `
     <div class="photo-card">
     <a class="info-link" href="${largeImageURL}">
-    <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+    <img src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
     <div class="info">
       <p class="info-item">
         <b>Likes:</b>${likes}
@@ -70,83 +118,12 @@ function renderEvents(page, keyword) {
         <b>Downloads:</b>${downloads}
       </p>
     </div>
-  </div>
-
-            `;
+  </div> 
+   `;
       }
     )
     .join('');
   galleryEl.innerHTML = markup;
 }
-
-// fetchCountryInput.addEventListener(
-//   'input',
-//   debounce(inputCountry, DEBOUNCE_DELAY)
-// );
-
-// function inputCountry(event) {
-//   const query = event.target.value.trim();
-//   if (query === "") {
-//     countryInfo.innerHTML = '';
-//     countryList.innerHTML = '';
-//     return;
-//   }
-
-//   fetchCountries(query)
-//     .then(countries => {
-//       if (countries.length >= 10) {
-//         Notiflix.Notify.info(
-//           'Too many matches found. Please enter a more specific name.'
-//         );
-//       } else if (countries.length < 10 && countries.length >= 2) {
-//         renderCountryList(countries);
-
-//       } else {
-//         renderCountryInfo(countries);
-//       }
-//     })
-//     .catch(error =>
-//       Notiflix.Notify.failure('Oops, there is no country with that name')
-//     );
-// }
-
-// function renderCountryList(countries) {
-//   const markup = countries
-//     .map(({ name, flags }) => {
-//       return `
-//       <li>
-//       <img src="${flags.svg}" alt="Flag of ${name.official}" width = 30px height = 30px>
-//       <h2>${name}</h2>
-//         </li>`;
-//     })
-//     .join('');
-//   countryList.innerHTML = markup;
-//   countryInfo.innerHTML = '';
-// }
-
-// function renderCountryInfo(countries) {
-//   const markup = countries
-//     .map(({ name, flags, capital, population, languages }) => {
-//       const languagesNew = languages.map(language => language.name);
-//       return `
-//         <ul>
-//         <img src="${flags.svg}" alt="Flag of ${name.official}" width = 30px height = 30px>
-//         <h2>${name}</h2>
-//           <p><b>Capital: </b>${capital}</p></li>
-//           <p><b>Population: </b>${population}</p></li>
-//           <b>Languages: </b>${languagesNew}</p></li>
-//         </ul>
-//         `;
-//     })
-//     .join('');
-//   countryInfo.innerHTML = markup;
-//   countryList.innerHTML = '';
-// }
-// /////////////////////////////
-/* <a class="gallery__link" href="${largeImageURL}">
-<img
-  class="gallery__image"
-  src="${webformatURL}"
-  alt="${tags}"
-/
-</a> */
+// //////////////////SimpleLightbox/////////////////////////////////////////
+// let gallery = new SimpleLightbox(".gallery  a",  { });
