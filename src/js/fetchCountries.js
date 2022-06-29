@@ -1,17 +1,30 @@
 
-// const baseUrl = 'https://restcountries.com/v2/name/';
-// const fieldsUrl = 'fields=name,capital,population,flags,languages';
+const BASE_URL = 'https://pixabay.com/api/';
+const API = `28317427-cd386f88f666cbda8176ce58f`;
 
 
-// export function fetchCountries(name) {
-//   return fetch(`${baseUrl}${name}?${fieldsUrl}`).then(response => {
-//     if (!response.ok) {
-//       throw new Error(response.status);
-//     }
 
-//     return response.json();
-//   });
-// }
+export function fetchEvents(page, keyword) {
+    const searchParams = new URLSearchParams({
+        key:API,
+        q,
+        image_type:"photo",
+        orientation: "horizontal",
+        safesearch:true,
+      });
+
+      
+  return fetch(`${BASE_URL}?${params}`).then(response => {
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+
+    return response.json();
+  });
+}
+
+
+
 
 
 // https://pixabay.com/api/
