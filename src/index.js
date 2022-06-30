@@ -48,9 +48,10 @@ formEl.addEventListener('submit', handleSubmit);
 function handleSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
-  keyword = form.elements.searchQuery.value.trim();
-  if (keyword === '') {
-    galleryEl.innerHTML = '';
+  keyword = form.elements.searchQuery.value;
+  if (keyword === "") {
+    galleryEl.innerHTML = "";
+    Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
     return;
   }
   if (page > 1) {
@@ -67,6 +68,7 @@ function handleSubmit(event) {
       observer.observe(target);
       //////////////////////////////////////////////////////////////
       if (events.length === 0) {
+        galleryEl.innerHTML = "";
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
@@ -83,6 +85,7 @@ function handleSubmit(event) {
       }
     })
     .catch(error => console.log(error));
+    event.currentTarget.reset();
 }
 
 // //////////////////renderEvents/////////////////////////////////////////
@@ -155,7 +158,12 @@ function update(entries) {
         .then(data => {
           newtotalHits = data.totalHits;
           const events = data.hits;
-          if (events.length === 0) {
+          if (keyword === "") {
+            galleryEl.innerHTML = "";
+            Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+            return;
+          }
+          if (events.length === 0 && keyword === "") {
             Notiflix.Notify.failure(
               'Sorry, there are no images matching your search query. Please try again.'
             );
