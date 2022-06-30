@@ -11,31 +11,31 @@ let newtotalHits;
 const formEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
 
-const loadMore = document.querySelector('.load-more');
-loadMore.classList.add('visually-hidden');
-// ////////////////////click/////////////////
-loadMore.addEventListener('click', handleClick);
-function handleClick() {
-  fetchEvents(keyword, page)
-    .then(data => {
-      newtotalHits = data.totalHits;
-      const events = data.hits;
-      page += 1;
-      renderEvents(events);
-      if (page > 1) {
-        loadMore.classList.remove('visually-hidden');
-      }
-    })
-    .catch(error => console.log(error));
+// const loadMore = document.querySelector('.load-more');
+// loadMore.classList.add('visually-hidden');
+// // ////////////////////click/////////////////
+// loadMore.addEventListener('click', handleClick);
+// function handleClick() {
+//   fetchEvents(keyword, page)
+//     .then(data => {
+//       newtotalHits = data.totalHits;
+//       const events = data.hits;
+//       page += 1;
+//       renderEvents(events);
+//       if (page > 1) {
+//         loadMore.classList.remove('visually-hidden');
+//       }
+//     })
+//     .catch(error => console.log(error));
 
-  if (page === newtotalHits / 40) {
-    loadMore.classList.remove('visually-hidden');
-    Notiflix.Notify.failure(
-      `We're sorry, but you've reached the end of search results.`
-    );
-    return;
-  }
-}
+//   if (page === newtotalHits / 40) {
+//     loadMore.classList.remove('visually-hidden');
+//     Notiflix.Notify.failure(
+//       `We're sorry, but you've reached the end of search results.`
+//     );
+//     return;
+//   }
+// }
 // ////////////////////submit/////////////////
 formEl.addEventListener('submit', handleSubmit);
 
@@ -69,7 +69,7 @@ function handleSubmit(event) {
       page += 1;
       renderEvents(events);
       if (page > 1) {
-        loadMore.classList.remove('visually-hidden');
+        // loadMore.classList.remove('visually-hidden');
         Notiflix.Notify.success(
           'Hooray! We found' + ' ' + newtotalHits + ' ' + 'images.'
         );
@@ -120,6 +120,7 @@ function renderEvents(events) {
   galleryEl.innerHTML = markup;
   let gallery = new SimpleLightbox('.gallery  a', {});
   gallery.refresh();
+    }
   // //////////////////SimpleLightbox/////////////////////////////////////////
 
   // ///////////////////////////Прокручування сторінки//////////////////////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ function update(entries) {
           renderEvents(events);
           if (keyword === "" ) {
             galleryEl.innerHTML = "";
-            loadMore.classList.add('visually-hidden');
+            // loadMore.classList.add('visually-hidden');
             Notiflix.Notify.failure(
               'Sorry, there are no images matching your search query. Please try again.'
             );
