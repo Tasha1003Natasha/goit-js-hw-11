@@ -20,12 +20,6 @@ function handleClick() {
     .then(data => {
       newtotalHits = data.totalHits;
       const events = data.hits;
-      if (events.length === 0) {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-        return;
-      }
       page += 1;
       renderEvents(events);
       if (page > 1) {
@@ -49,11 +43,6 @@ function handleSubmit(event) {
   event.preventDefault();
   const form = event.currentTarget;
   keyword = form.elements.searchQuery.value;
-  if (keyword === "") {
-    galleryEl.innerHTML = "";
-    Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
-    return;
-  }
   if (page > 1) {
     page = 1;
   }
@@ -67,8 +56,11 @@ function handleSubmit(event) {
       //////////////////infinite-scroll////////////////////////////////
       observer.observe(target);
       //////////////////////////////////////////////////////////////
-      if (events.length === 0) {
+      if (keyword === "") {
         galleryEl.innerHTML = "";
+        return;
+      }
+      if (events.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
@@ -158,19 +150,22 @@ function update(entries) {
         .then(data => {
           newtotalHits = data.totalHits;
           const events = data.hits;
-          if (keyword === "") {
+          page += 1;
+          renderEvents(events);
+          if (keyword === "" ) {
             galleryEl.innerHTML = "";
-            Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
-            return;
-          }
-          if (events.length === 0 && keyword === "") {
+            loadMore.classList.add('visually-hidden');
             Notiflix.Notify.failure(
               'Sorry, there are no images matching your search query. Please try again.'
             );
             return;
           }
-          page += 1;
-          renderEvents(events);
+          if (events.length === 0) {
+            Notiflix.Notify.failure(
+              'Sorry, there are no images matching your search query. Please try again.'
+            );
+            return;
+          }
         })
         .catch(error => console.log(error));
 
