@@ -123,14 +123,14 @@ function renderEvents(events) {
   // //////////////////SimpleLightbox/////////////////////////////////////////
 
   // ///////////////////////////Прокручування сторінки//////////////////////////////////////////////////////////////////////////////
-  const { height: cardHeight } = galleryEl;
-  galleryEl.firstElementChild.getBoundingClientRect();
+//   const { height: cardHeight } = galleryEl;
+//   galleryEl.firstElementChild.getBoundingClientRect();
 
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-}
+//   window.scrollBy({
+//     top: cardHeight * 2,
+//     behavior: 'smooth',
+//   });
+// }
 
 // //////////////////infinite-scroll//////////////////////////////////////////////////
 const target = document.querySelector('.target-guard');
