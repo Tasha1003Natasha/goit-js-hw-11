@@ -34,7 +34,7 @@ function handleClick() {
     })
     .catch(error => console.log(error));
 
-  if (page === newtotalHits / 5) {
+  if (page === newtotalHits / 40) {
     loadMore.classList.remove('visually-hidden');
     Notiflix.Notify.failure(
       `We're sorry, but you've reached the end of search results.`
@@ -165,7 +165,7 @@ function update(entries) {
         })
         .catch(error => console.log(error));
 
-      if (page === newtotalHits / 5) {
+      if (page === newtotalHits / 40) {
         Notiflix.Notify.failure(
           `We're sorry, but you've reached the end of search results.`
         );
