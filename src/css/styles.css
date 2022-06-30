@@ -44,9 +44,6 @@ input[type=text] {
   color: black;
 }
 
-/* .search-form {
-  background-color: #1b22f59f;
-} */
 
 button[type=submit] {
   background-color: #eff21b9f;
@@ -57,3 +54,34 @@ button[type=submit]:hover,
 button[type=submit]:focus {
     background-color:#188CE8;
 }
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+  grid-auto-rows: 240px; 
+  grid-auto-rows: 240px; 
+  grid-gap: 20px;
+  justify-content: center;
+  padding: 0;
+  list-style: none;
+  margin-left: auto;
+  margin-right: auto; 
+}
+
+.photo-card {
+  position: relative;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.gallery__image:hover {
+  transform: scale(1.03);
+}
+
+.info-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform var(--animation-duration) var(--timing-function);
+}
+

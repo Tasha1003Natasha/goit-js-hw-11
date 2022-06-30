@@ -99,9 +99,10 @@ function renderEvents(events) {
         downloads,
       }) => {
         return `
-    <div class="photo-card">
+    <div class="photo-card"> 
     <a class="info-link" href="${largeImageURL}">
-    <img src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+    <img class="info-image" src="${webformatURL}" alt="${tags}" loading="lazy"/>
+    </a>
     <div class="info">
       <p class="info-item">
         <b>Likes:</b>${likes}
@@ -174,3 +175,5 @@ function update(entries) {
     }
   });
 }
+
+
