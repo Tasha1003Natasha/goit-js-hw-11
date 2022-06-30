@@ -34,3 +34,26 @@ body {
   margin: -1px;
 }
 
+input[type=text] {
+  box-sizing: border-box;
+  padding: 12px 20px;
+  margin: 20px 20px;
+  border: 5px solid #1b22f59f;
+  border-radius: 4px;
+  background-color: #eff21b9f;
+  color: black;
+}
+
+/* .search-form {
+  background-color: #1b22f59f;
+} */
+
+button[type=submit] {
+  background-color: #eff21b9f;
+  border: 3px solid #1b22f59f;
+}
+
+button[type=submit]:hover,
+button[type=submit]:focus {
+    background-color:#188CE8;
+}

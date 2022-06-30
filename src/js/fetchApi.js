@@ -16,7 +16,6 @@ export async function fetchEvents(keyword, page) {
   });
 
   const response = await axios.get(`${BASE_URL}?${params}`)
-  console.log(response.data);
   return response.data
 }
 

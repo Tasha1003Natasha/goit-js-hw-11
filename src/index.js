@@ -2,7 +2,7 @@ import './css/styles.css';
 import { fetchEvents } from './js/fetchApi';
 import Notiflix from 'notiflix';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import SimpleLightbox from "simplelightbox";
+import SimpleLightbox from 'simplelightbox';
 
 let page = 1;
 let keyword;
@@ -13,10 +13,8 @@ const galleryEl = document.querySelector('.gallery');
 
 const loadMore = document.querySelector('.load-more');
 loadMore.classList.add('visually-hidden');
-
 // ////////////////////click/////////////////
 loadMore.addEventListener('click', handleClick);
-
 function handleClick() {
   fetchEvents(keyword, page)
     .then(data => {
@@ -28,7 +26,6 @@ function handleClick() {
         );
         return;
       }
-
       page += 1;
       renderEvents(events);
       if (page > 1) {
@@ -48,10 +45,8 @@ function handleClick() {
 // ////////////////////submit/////////////////
 formEl.addEventListener('submit', handleSubmit);
 
-
 function handleSubmit(event) {
   event.preventDefault();
-
   const form = event.currentTarget;
   keyword = form.elements.searchQuery.value.trim();
   if (keyword === '') {
@@ -61,11 +56,16 @@ function handleSubmit(event) {
   if (page > 1) {
     page = 1;
   }
-
+  //////////////////infinite-scroll////////////////////////////////
+  observer.unobserve(target);
+  //////////////////////////////////////////////////////////////
   fetchEvents(keyword, page)
     .then(data => {
       newtotalHits = data.totalHits;
       const events = data.hits;
+      //////////////////infinite-scroll////////////////////////////////
+      observer.observe(target);
+      //////////////////////////////////////////////////////////////
       if (events.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
@@ -83,8 +83,6 @@ function handleSubmit(event) {
       }
     })
     .catch(error => console.log(error));
-
-  event.currentTarget.reset();
 }
 
 // //////////////////renderEvents/////////////////////////////////////////
@@ -124,6 +122,55 @@ function renderEvents(events) {
     )
     .join('');
   galleryEl.innerHTML = markup;
+  let gallery = new SimpleLightbox('.gallery  a', {});
+  gallery.refresh();
+  // //////////////////SimpleLightbox/////////////////////////////////////////
+
+  // ///////////////////////////Прокручування сторінки//////////////////////////////////////////////////////////////////////////////
+  const { height: cardHeight } = galleryEl;
+  galleryEl.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
-// //////////////////SimpleLightbox/////////////////////////////////////////
-// let gallery = new SimpleLightbox(".gallery  a",  { });
+
+// //////////////////infinite-scroll//////////////////////////////////////////////////
+const target = document.querySelector('.target-guard');
+
+const options = {
+  root: null,
+  rootMargin: '100px',
+  threshold: 1.0,
+};
+
+const observer = new IntersectionObserver(update, options);
+
+function update(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      fetchEvents(keyword, page)
+        .then(data => {
+          newtotalHits = data.totalHits;
+          const events = data.hits;
+          if (events.length === 0) {
+            Notiflix.Notify.failure(
+              'Sorry, there are no images matching your search query. Please try again.'
+            );
+            return;
+          }
+          page += 1;
+          renderEvents(events);
+        })
+        .catch(error => console.log(error));
+
+      if (page === newtotalHits / 5) {
+        Notiflix.Notify.failure(
+          `We're sorry, but you've reached the end of search results.`
+        );
+        return;
+      }
+    }
+  });
+}
